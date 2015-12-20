@@ -1,0 +1,87 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{times}
+\usepackage[cm]{fullpage}
+\usepackage{textcomp}
+\author{Théo Verhelst}
+\title{Rapport du projet 2 : \textit{Tic Tac Toe}\\Cours de Systèmes d'exploitation : INFO-F-201}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+Ce document est le rapport relatif au projet du cours de Systèmes d'exploitation (\textit{INFO-F-201}) : \textit{Tic Tac Toe}.
+Pour commencer, nous exposerons l'énoncé du projet ainsi que ses objectifs pédagogiques.
+Ensuite seront discutés les choix effectués l'implémentation.
+\subsection{Énoncé}
+Le projet a pour but d'implémenter le jeu \textit{Tic Tac Toe}, également appelé \textit{Morpion}.
+Le plateau de jeu consiste en une grille de $3\times3$ cases, et chacun des deux joueurs a pour objectif
+de compléter une ligne, une colonne ou une diagonale avec le signe qui lui est assigné, l'ensemble des signes possibles
+étant les lettres \textit{X} et \textit{O}.
+Les joueurs jouent tour par tour, en placant un signe sur une case vide à chaque tour.\\
+Le jeu doit être jouable en ligne de commande, et fonctionner par réseau, c'est à dire que
+le joueur se confronte à un ordinateur distant unique appellé \textit{serveur}.
+Par opposition, l'entité qui interagit à distance avec le serveur est appellée \textit{client}, ce terme
+englobant l'utilisateur physique et son moyen de communication avec le serveur.\\
+Le serveur doit pouvoir jouer avec un nombre non limité de clients.
+\subsection{Objectifs}
+L'intérêt du projet et de démontrer l'acquisition des connaisances vues en cours de Systèmes d'exploitation,
+et plus précisément la communication réseau et les appels système, notamment le \textit{fork}.
+
+\section{Implémentation}
+\subsection{Modèle générale}
+Le fonctionnement général de l'application consiste en deux programmes distincts, le \textit{client} et le \textit{serveur}.
+Le serveur tourne en continu grâce à une boucle infinie, et accepte à chaque tour de boucle une nouvelle connexion entrante de la
+part d'un client. La fonction gérant la connection avec le client et jouant le jeu est alors lancée dans un processus parallèle
+au moyen de l'appel système \textit{fork}, tandis que le processus originel du serveur attend de nouveau une connexion entrante.
+
+\subsection{Fonctionnement du client}
+L'application client tente, à son lancement, de se connecter au serveur fourni en argument de ligne de commande.
+Ensuite, une invite de début de partie est affichée, et si l'utilisateur confirme sa volonté de jouer, la partie commence.
+À chaque tour de jeu, le client :
+\begin{enumerate}
+	\item reçoit de la part du serveur la grille de jeu;
+	\item demande à l'utilisateur quelle case jouer;
+	\item envoie la coordonée de la case jouée au serveur;
+	\item reçoit la nouvelle situation de jeu suite à l'action du joueur;
+	\item reçoit la nouvelle situation de jeu suite à l'action du serveur;
+	\item recommence à la première étape;
+\end{enumerate}
+Chaque étape peut être interrompue par un problème de connexion, par la victoire d'un des joueurs, par un match null ou par la volonté du joueur
+de quitter à la partie.
+
+
+\subsection{Fonctionnement du serveur}
+Le fonctionnement général du serveur déjà été décrit dans la section \textit{Modèle général}, cette section détaille plutôt
+la procédure se chargeant de jouer une partie avec un client.
+À chaque tour de jeu, le serveur:
+\begin{enumerate}
+	\item joue une case libre dans la grille;
+	\item envoie la grille au client;
+	\item reçoit de la part du client l'action de l'utilisateur;
+	\item applique l'action de l'utilisateur sur la grille de jeu;
+	\item envoie la grille au client;
+	\item recommence à la première étape;
+\end{enumerate}
+Tout comme pour l'application cliente, chaque étape peut être interrompue par
+un problème de connexion, par la victoire d'un des joueurs, par un match null ou par la volonté du joueur
+de quitter à la partie.
+\subsection{Conventions}
+Les deux applications serveur et client utilisent une même procédure calculant l'état du jeu à partir de la grille courante,
+qui permet de savoir s'il y a un match nul, un gagnant, ou si la partie n'est pas encore finie.
+Cette fonction commune permet de tacitement fermer la connexion des deux côtés quand la partie est finie,
+sans la nécessité pour le serveur d'envoyer au client un message de fin de partie.
+\paragraph{}
+Certaines des conventions de l'énoncé n'ont pas été appliqués et ont fait l'objet de définition statique
+au moyen de la directive \textit{\#define}. Les simplifications en question sont principalement la taille
+de la grille et le signe utilisé par le joueur ainsi que celui utilisé par le client. Cela permet une
+plus grand généricité et une meilleure maintenabilité.
+\subsection{Architecture du code}
+Le code est divisé en 3 fichiers d'en-tête, ainsi que 3 fichiers d'implémentations associés.
+Il y a bien évidemment le fichier concernant le serveur et le client, à savoir respectivement \textit{server.h} et \textit{client.h},
+mais il y a aussi un fichier \textit{common.h} qui regroupe toutes les fonctions n'étant pas spécifiques au serveur ou au client.
+Cela comprend notamment des méthodes de simplification de la communication réseau (se chargeant de la gestion des erreurs),
+ainsi que les méthodes de manipulation de la grille de jeu qui interviennent dans les deux parties de l'architecture.
+\end{document}
