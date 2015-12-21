@@ -10,7 +10,7 @@
 #define IA_TOKEN O_TOKEN
 #define BLANK_TOKEN '\0'
 
-enum
+enum game_state_e
 {
 	NULL_MATCH,
 	CONTINUE_GAME,
@@ -38,7 +38,7 @@ int is_valid_play(int cell, char grid[GRID_HEIGHT][GRID_WIDTH]);
 
 void set_cell(int cell, char char_to_write, char grid[GRID_HEIGHT][GRID_WIDTH]);
 
-int get_game_state(char grid[GRID_HEIGHT][GRID_WIDTH]);
+enum game_state_e get_game_state(char grid[GRID_HEIGHT][GRID_WIDTH]);
 
 #endif // COMMON_H
 

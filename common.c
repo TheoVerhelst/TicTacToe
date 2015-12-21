@@ -136,7 +136,7 @@ void set_cell(int cell, char char_to_write, char grid[GRID_HEIGHT][GRID_WIDTH])
 	grid[cell / GRID_WIDTH][cell % GRID_WIDTH] = char_to_write;
 }
 
-int get_game_state(char grid[GRID_HEIGHT][GRID_WIDTH])
+enum game_state_e get_game_state(char grid[GRID_HEIGHT][GRID_WIDTH])
 {
 	//Check if there is a complete row
 	for(unsigned int i = 0; i < GRID_HEIGHT; ++i)

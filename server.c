@@ -52,7 +52,7 @@ void play_game(int client_sockfd)
 	if(!confirmation)
 		return;
 
-	int game_state;
+	enum game_state_e game_state;
 	do
 	{
 		//Play and send the new grid

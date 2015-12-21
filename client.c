@@ -34,7 +34,7 @@ void play_game(int server_sockfd)
 		return;
 
 	struct acting user_acting;
-	int game_state;
+	enum game_state_e game_state;
 	do
 	{
 		//Receive and print the grid
@@ -121,7 +121,7 @@ void print_grid(char grid[GRID_HEIGHT][GRID_WIDTH])
 			printf("━┫\n");
 		}
 	}
-	printf("┗");
+	printf("\n┗");
 	for(unsigned int j = 0; j < GRID_WIDTH - 1; ++j)
 		printf("━┻");
 	printf("━┛\n\n");
