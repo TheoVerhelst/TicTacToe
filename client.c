@@ -98,12 +98,13 @@ struct acting get_user_input(char grid[GRID_HEIGHT][GRID_WIDTH])
 
 void print_grid(char grid[GRID_HEIGHT][GRID_WIDTH])
 {
+	printf("┏");
+	for(unsigned int i = 0; i < GRID_WIDTH - 1; ++i)
+		printf("━┳");
+	printf("━┓\n");
 	for(unsigned int i = 0; i < GRID_HEIGHT; ++i)
 	{
-		printf("\n╋");
-		for(unsigned int j = 0; j < GRID_WIDTH; ++j)
-			printf("━╋");
-		printf("\n┃");
+		printf("┃");
 		for(unsigned int j = 0; j < GRID_WIDTH; ++j)
 		{
 			const char cell = grid[i][j];
@@ -112,10 +113,17 @@ void print_grid(char grid[GRID_HEIGHT][GRID_WIDTH])
 			else
 				printf("%c┃", cell);
 		}
+		if(i < GRID_WIDTH - 1)
+		{
+			printf("\n┣");
+			for(unsigned int j = 0; j < GRID_WIDTH - 1; ++j)
+				printf("━╋");
+			printf("━┫\n");
+		}
 	}
-	printf("\n╋");
-	for(unsigned int j = 0; j < GRID_WIDTH; ++j)
-		printf("━╋");
-	printf("\n\n");
+	printf("┗");
+	for(unsigned int j = 0; j < GRID_WIDTH - 1; ++j)
+		printf("━┻");
+	printf("━┛\n\n");
 }
 
